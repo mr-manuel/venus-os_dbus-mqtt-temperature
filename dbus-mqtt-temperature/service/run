@@ -1,0 +1,4 @@
+#!/bin/sh
+echo "*** starting dbus-mqtt-temperature ***"
+exec 2>&1
+exec /data/etc/dbus-mqtt-temperature/dbus-mqtt-temperature.py
