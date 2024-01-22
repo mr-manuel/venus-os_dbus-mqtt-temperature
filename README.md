@@ -57,9 +57,47 @@ OR
 
 ### Install
 
-1. Copy the `dbus-mqtt-temperature` folder to `/data/etc` on your Venus OS device
+1. Login to your Venus OS device via SSH. See [Venus OS:Root Access](https://www.victronenergy.com/live/ccgx:root_access#root_access) for more details.
 
-2. Run `bash /data/etc/dbus-mqtt-temperature/install.sh` as root
+2. Execute this commands to download and extract the files:
+
+    ```bash
+    # change to temp folder
+    cd /tmp
+
+    # download driver
+    wget -O /tmp/venus-os_dbus-mqtt-temperature.zip https://github.com/mr-manuel/venus-os_dbus-mqtt-temperature/archive/refs/heads/master.zip
+
+    # If updating: cleanup old folder
+    rm -rf /tmp/venus-os_dbus-mqtt-temperature-master
+
+    # unzip folder
+    unzip venus-os_dbus-mqtt-temperature.zip
+
+    # If updating: backup existing config file
+    mv /data/etc/dbus-mqtt-temperature/config.ini /data/etc/dbus-mqtt-temperature_config.ini
+
+    # If updating: cleanup existing driver
+    rm -rf /data/etc/dbus-mqtt-temperature
+
+    # copy files
+    cp -R /tmp/venus-os_dbus-mqtt-temperature-master/dbus-mqtt-temperature/ /data/etc/
+
+    # If updating: restore existing config file
+    mv /data/etc/dbus-mqtt-temperature_config.ini /data/etc/dbus-mqtt-temperature/config.ini
+    ```
+
+3. Copy the sample config file, if you are installing the driver for the first time and edit it to your needs.
+
+    ```bash
+    # copy default config file
+    cp /data/etc/dbus-mqtt-temperature/config.sample.ini /data/etc/dbus-mqtt-temperature/config.ini
+
+    # edit the config file with nano
+    nano /data/etc/dbus-mqtt-temperature/config.ini
+    ```
+
+4. Run `bash /data/etc/dbus-mqtt-temperature/install.sh` to install the driver as service.
 
    The daemon-tools should start this service automatically within seconds.
 
