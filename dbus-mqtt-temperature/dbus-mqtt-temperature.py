@@ -278,7 +278,7 @@ def main():
     DBusGMainLoop(set_as_default=True)
 
     # MQTT setup
-    client = mqtt.Client("MqttTemperature_" + str(config["MQTT"]["device_instance"]))
+    client = mqtt.Client("MqttTemperature_" + str(config["DEFAULT"]["device_instance"]))
     client.on_disconnect = on_disconnect
     client.on_connect = on_connect
     client.on_message = on_message
@@ -372,9 +372,9 @@ def main():
 
     DbusMqttTemperatureService(
         servicename="com.victronenergy.temperature.mqtt_temperature_"
-        + str(config["MQTT"]["device_instance"]),
-        deviceinstance=int(config["MQTT"]["device_instance"]),
-        customname=config["MQTT"]["device_name"],
+        + str(config["DEFAULT"]["device_instance"]),
+        deviceinstance=int(config["DEFAULT"]["device_instance"]),
+        customname=config["DEFAULT"]["device_name"],
         paths=paths_dbus,
     )
 
