@@ -1,6 +1,7 @@
 # Changelog
 
 ## v0.0.5-dev
+* Added: New temperature types room, outdoor, waterheater and freezer
 * Changed: Broker port missing on reconnect
 * Changed: Fixed service not starting sometimes
 
