@@ -131,6 +131,8 @@ def on_message(client, userdata, msg):
                         temperature = float(jsonpayload["temperature"])
                     elif "value" in jsonpayload:
                         temperature = float(jsonpayload["value"])
+                    elif isinstance(jsonpayload, (int, float)):
+                        temperature = float(jsonpayload)
 
                     # check if humidity exists
                     if "humidity" in jsonpayload:
@@ -141,15 +143,19 @@ def on_message(client, userdata, msg):
                         pressure = float(jsonpayload["pressure"])
 
                 else:
-                    logging.error('Received JSON MQTT message does not include a temperature object. Expected at least: {"temperature": 22.0} or {"value": 22.0}')
+                    logging.error('Received JSON MQTT message does not include a temperature object. Expected at least: {"temperature": 22.0} or {"value": 22.0} or 22.0')
                     logging.debug("MQTT payload: " + str(msg.payload)[1:])
 
             else:
                 logging.warning("Received JSON MQTT message was empty and therefore it was ignored")
                 logging.debug("MQTT payload: " + str(msg.payload)[1:])
 
+    except TypeError as e:
+        logging.error("Received message is not valid. Check the README and sample payload. %s" % e)
+        logging.debug("MQTT payload: " + str(msg.payload)[1:])
+
     except ValueError as e:
-        logging.error("Received message is not a valid JSON. %s" % e)
+        logging.error("Received message is not a valid JSON. Check the README and sample payload. %s" % e)
         logging.debug("MQTT payload: " + str(msg.payload)[1:])
 
     except Exception as e:
