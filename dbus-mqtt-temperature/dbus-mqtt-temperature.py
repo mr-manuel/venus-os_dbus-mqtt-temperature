@@ -10,6 +10,7 @@ import json
 import paho.mqtt.client as mqtt
 import configparser  # for config/ini file
 import _thread
+import re
 
 # import Victron Energy packages
 sys.path.insert(1, os.path.join(os.path.dirname(__file__), "ext", "velib_python"))
@@ -122,34 +123,47 @@ def on_message(client, userdata, msg):
         # get JSON from topic
         if msg.topic == config["MQTT"]["topic"]:
             if msg.payload != "" and msg.payload != b"":
-                jsonpayload = json.loads(msg.payload)
 
-                last_changed = int(time())
+                # Regex to check if payload is a number
+                number_regex = re.compile(r"^-?\d+(\.\d+)?$")
 
-                if "temperature" in jsonpayload or "value" in jsonpayload:
-                    if "temperature" in jsonpayload:
-                        temperature = float(jsonpayload["temperature"])
-                    elif "value" in jsonpayload:
-                        temperature = float(jsonpayload["value"])
+                if number_regex.match(msg.payload.decode("utf-8")):
+                    temperature = float(msg.payload)
 
-                    # check if humidity exists
-                    if "humidity" in jsonpayload:
-                        humidity = float(jsonpayload["humidity"])
-
-                    # check if pressure exists
-                    if "pressure" in jsonpayload:
-                        pressure = float(jsonpayload["pressure"])
-
+                    last_changed = int(time())
                 else:
-                    logging.error('Received JSON MQTT message does not include a temperature object. Expected at least: {"temperature": 22.0} or {"value": 22.0}')
-                    logging.debug("MQTT payload: " + str(msg.payload)[1:])
+                    jsonpayload = json.loads(msg.payload)
+
+                    last_changed = int(time())
+
+                    if "temperature" in jsonpayload or "value" in jsonpayload:
+                        if "temperature" in jsonpayload:
+                            temperature = float(jsonpayload["temperature"])
+                        elif "value" in jsonpayload:
+                            temperature = float(jsonpayload["value"])
+
+                        # check if humidity exists
+                        if "humidity" in jsonpayload:
+                            humidity = float(jsonpayload["humidity"])
+
+                        # check if pressure exists
+                        if "pressure" in jsonpayload:
+                            pressure = float(jsonpayload["pressure"])
+
+                    else:
+                        logging.error('Received JSON MQTT message does not include a temperature object. Expected at least: {"temperature": 22.0} or {"value": 22.0}')
+                        logging.debug("MQTT payload: " + str(msg.payload)[1:])
 
             else:
-                logging.warning("Received JSON MQTT message was empty and therefore it was ignored")
+                logging.warning('Received JSON MQTT message was empty and therefore it was ignored. Expected at least: {"temperature": 22.0} or {"value": 22.0} or 22.0')
                 logging.debug("MQTT payload: " + str(msg.payload)[1:])
 
+    except TypeError as e:
+        logging.error("Received message is not valid. Check the README and sample payload. %s" % e)
+        logging.debug("MQTT payload: " + str(msg.payload)[1:])
+
     except ValueError as e:
-        logging.error("Received message is not a valid JSON. %s" % e)
+        logging.error("Received message is not a valid JSON. Check the README and sample payload. %s" % e)
         logging.debug("MQTT payload: " + str(msg.payload)[1:])
 
     except Exception as e:
@@ -185,7 +199,7 @@ class DbusMqttTemperatureService:
         self._dbusservice.add_path("/ProductId", 0xFFFF)
         self._dbusservice.add_path("/ProductName", productname)
         self._dbusservice.add_path("/CustomName", customname)
-        self._dbusservice.add_path("/FirmwareVersion", "0.0.5-dev (20241008)")
+        self._dbusservice.add_path("/FirmwareVersion", "0.0.5-dev (20241220)")
         # self._dbusservice.add_path('/HardwareVersion', '')
         self._dbusservice.add_path("/Connected", 1)
 
