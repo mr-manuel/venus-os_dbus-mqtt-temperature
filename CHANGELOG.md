@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.0.5-dev
+## v0.0.5
 * Added: MQTT message can now also be only a float number
 * Added: New temperature types room, outdoor, waterheater and freezer
 * Changed: Broker port missing on reconnect
