@@ -52,14 +52,6 @@ Copy or rename the `config.sample.ini` to `config.ini` in the `dbus-mqtt-tempera
 OR
 
 ```json
-{
-    "value": 22.0
-}
-```
-
-OR
-
-```json
 22.0
 ```
 
@@ -77,6 +69,7 @@ OR
 ```
 </details>
 
+You can customize the names used in the MQTT message in the config.
 
 ## Install / Update
 
