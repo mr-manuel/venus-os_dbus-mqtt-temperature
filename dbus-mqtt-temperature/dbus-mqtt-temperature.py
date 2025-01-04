@@ -74,6 +74,10 @@ if "DEFAULT" in config and "type" in config["DEFAULT"]:
 else:
     type = 2
 
+# get names used in the MQTT messages
+temperature_name = str(config["MQTT"]["temperature_name"])
+humidity_name = str(config["MQTT"]["humidity_name"])
+pressure_name = str(config["MQTT"]["pressure_name"])
 
 # set variables
 connected = 0
@@ -136,26 +140,23 @@ def on_message(client, userdata, msg):
 
                     last_changed = int(time())
 
-                    if "temperature" in jsonpayload or "value" in jsonpayload:
-                        if "temperature" in jsonpayload:
-                            temperature = float(jsonpayload["temperature"])
-                        elif "value" in jsonpayload:
-                            temperature = float(jsonpayload["value"])
+                    if temperature_name in jsonpayload:
+                        temperature = float(jsonpayload[temperature_name])
 
                         # check if humidity exists
-                        if "humidity" in jsonpayload:
-                            humidity = float(jsonpayload["humidity"])
+                        if humidity_name in jsonpayload:
+                            humidity = float(jsonpayload[humidity_name])
 
                         # check if pressure exists
-                        if "pressure" in jsonpayload:
-                            pressure = float(jsonpayload["pressure"])
+                        if pressure_name in jsonpayload:
+                            pressure = float(jsonpayload[pressure_name])
 
                     else:
-                        logging.error('Received JSON MQTT message does not include a temperature object. Expected at least: {"temperature": 22.0} or {"value": 22.0}')
+                        logging.error(f'Received JSON MQTT message does not include a temperature object. Expected at least: {{"{temperature_name}": 22.0}}')
                         logging.debug("MQTT payload: " + str(msg.payload)[1:])
 
             else:
-                logging.warning('Received JSON MQTT message was empty and therefore it was ignored. Expected at least: {"temperature": 22.0} or {"value": 22.0} or 22.0')
+                logging.warning(f'Received JSON MQTT message was empty and therefore it was ignored. Expected at least: {{"{temperature_name}": 22.0}} or 22.0')
                 logging.debug("MQTT payload: " + str(msg.payload)[1:])
 
     except TypeError as e:
