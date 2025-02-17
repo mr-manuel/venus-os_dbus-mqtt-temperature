@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.7
+⚠️ This version is required for Venus OS v3.60~27 or later, but it is also compatible with older versions.
+* Added: paho-mqtt module to driver
+
 ## v0.0.6
 * Changed: Allow to use customized JSON property names by @hoone123
 
