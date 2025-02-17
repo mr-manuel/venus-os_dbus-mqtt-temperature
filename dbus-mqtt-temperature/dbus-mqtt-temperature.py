@@ -75,9 +75,9 @@ else:
     type = 2
 
 # get names used in the MQTT messages
-temperature_name = str(config["MQTT"]["temperature_name"])
-humidity_name = str(config["MQTT"]["humidity_name"])
-pressure_name = str(config["MQTT"]["pressure_name"])
+temperature_name = str(config["MQTT"].get("temperature_name", "temperature"))
+humidity_name = str(config["MQTT"].get("humidity_name", "humidity"))
+pressure_name = str(config["MQTT"].get("pressure_name", "pressure"))
 
 # set variables
 connected = 0
@@ -140,8 +140,11 @@ def on_message(client, userdata, msg):
 
                     last_changed = int(time())
 
-                    if temperature_name in jsonpayload:
-                        temperature = float(jsonpayload[temperature_name])
+                    if temperature_name in jsonpayload or "value" in jsonpayload:
+                        if temperature_name in jsonpayload:
+                            temperature = float(jsonpayload["temperature"])
+                        elif "value" in jsonpayload:
+                            temperature = float(jsonpayload["value"])
 
                         # check if humidity exists
                         if humidity_name in jsonpayload:
@@ -200,7 +203,7 @@ class DbusMqttTemperatureService:
         self._dbusservice.add_path("/ProductId", 0xFFFF)
         self._dbusservice.add_path("/ProductName", productname)
         self._dbusservice.add_path("/CustomName", customname)
-        self._dbusservice.add_path("/FirmwareVersion", "0.0.5 (20241220)")
+        self._dbusservice.add_path("/FirmwareVersion", "0.0.6 (20250217)")
         # self._dbusservice.add_path('/HardwareVersion', '')
         self._dbusservice.add_path("/Connected", 1)
 

@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.0.6
+* Changed: Allow to use customized JSON property names by @hoone123
+
 ## v0.0.5
 * Added: MQTT message can now also be only a float number
 * Added: New temperature types room, outdoor, waterheater and freezer
